@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="editprofil-container">
+        <div class="editprofil-card">
+            <div class="editprofil-header">
+                <h1 class="editprofil-title">Edit profil</h1>
+                <p class="editprofil-subtitle">edit profil anda</p>
+            </div>
+
+            <div class="editprofil-avatar">
+                <div class="editprofil-avatar-icon"></div>
+            </div>
+
+            <form class="editprofil-form">
+                <div class="editprofil-field">
+                    <label class="editprofil-label" for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="editprofil-input" 
+                        placeholder="Masukkan username"
+                    >
+                </div>
+
+                <div class="editprofil-field">
+                    <label class="editprofil-label" for="telepon">Telepon</label>
+                    <input 
+                        type="tel" 
+                        id="telepon" 
+                        class="editprofil-input" 
+                        placeholder="Masukkan nomor telepon"
+                    >
+                </div>
+
+                <button type="button" class="editprofil-submit-btn" onclick="window.location.href='profil.html'">
+                    Ubah
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.editprofil-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const telepon = document.getElementById('telepon').value;
+            
+            if (username.trim() === '' || telepon.trim() === '') {
+                alert('Harap isi semua field!');
+                return;
+            }
+            
+            alert('Profil berhasil diubah!');
+        });
+
+        // Focus effects
+        const inputs = document.querySelectorAll('.editprofil-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('editprofil-field-focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('editprofil-field-focused');
+            });
+        });
+    </script>
+</body>
+</html>

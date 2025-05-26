@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Florelei</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Register Page -->
+    <div class="register-page">
+        <div class="register-container">
+            <div class="register-card">
+                <div class="register-header">
+                    <h1 class="register-title">Daftarkan Akunmu!</h1>
+                    <p class="register-subtitle">Daftarkan akunmu untuk akses membeli bunga secara lengkap!</p>
+                </div>
+                
+                <form class="register-form">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Masukan Nama</label>
+                        <input type="text" id="name" class="form-input" placeholder="">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Masukan Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Masukan No HP</label>
+                        <input type="tel" id="phone" class="form-input" placeholder="">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Masukan Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mother-name" class="form-label">Masukan Nama Ibu</label>
+                        <input type="text" id="mother-name" class="form-input" placeholder="">
+                        <small class="form-hint">ini digunakan saat anda lupa password!</small>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms" class="checkbox-input">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">I agree with Florelei Flower.co. Terms of Service, Privacy Policy, and our default Notification Settings</span>
+                        </label>
+                    </div>
+                    
+                 <button type="button" class="btn-register-form" onclick="window.location.href='portal.html'">Buat Akun</button>
+                    
+                    <div class="register-links">
+                        <p class="login-link">
+                            Punya akun? 
+                            <a href="login.html" class="login-link-text">Login</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
