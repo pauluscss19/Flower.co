@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } catch (Exception $e) {
         $pdo->rollBack();
-        $_SESSION['register_error'] = "Gagal membuat akun. Silakan coba lagi.";
+        $_SESSION['register_error'] = "Gagal membuat akun Silakan coba lagi.";
         header("Location: register.php");
         exit;
     }
