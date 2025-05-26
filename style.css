@@ -11,21 +11,6 @@ body {
   color: #333;
   background-color: #fbf3c1;
 }
-.notif {
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-}
-.notif.error {
-  background-color: #ffe6e6;
-  color: #cc0000;
-  border: 1px solid #cc0000;
-}
-.notif.success {
-  background-color: #e6ffe6;
-  color: #006600;
-  border: 1px solid #006600;
-}
 
 .container {
   max-width: 1200px;
