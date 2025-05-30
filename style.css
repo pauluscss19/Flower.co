@@ -1831,18 +1831,6 @@ body {
   animation-fill-mode: backwards;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body { 
-  font-family: 'Arial', sans-serif; 
-  background-color: #FBF3C1; /* Warna background baru */
-}
-
-/* Header Styles */
 .flower-header {
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
