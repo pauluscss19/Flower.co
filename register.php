@@ -93,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form-group">
-                        <label for="mother-name" class="form-label">Masukan Nama Ibu</label>
-                        <input type="text" id="mother-name" name="nama_ibu" class="form-input">
+                        <label for="pet-name" class="form-label">Masukan Nama Hewan Peliharaan</label>
+                        <input type="text" id="pet-name" name="nama_hewanpeliharaan" class="form-input">
                         <small class="form-hint">Ini digunakan saat anda lupa password!</small>
                     </div>
 
