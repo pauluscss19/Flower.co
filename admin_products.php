@@ -53,7 +53,9 @@ $products = $pdo->query("SELECT * FROM barang ORDER BY id DESC")->fetchAll();
                 <div class="admin-data-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2>All Products</h2>
-                        <button class="admin-login-btn" style="padding: 0.5rem 1rem;">Add New Product</button>
+                        <button class="admin-login-btn" style="padding: 0.5rem 1rem;" onclick="window.location.href='admin_tambah_produk.php'">
+    Add New Product
+</button>
                     </div>
                     
                     <table class="admin-table">

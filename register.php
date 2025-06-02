@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } catch (Exception $e) {
         $pdo->rollBack();
-        $_SESSION['register_error'] = "Gagal membuat akun Silakan coba lagi.";
+        $_SESSION['register_error'] = "Gagal membuat akun. Silakan coba lagi.";
         header("Location: register.php");
         exit;
     }
@@ -93,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form-group">
-                        <label for="pet-name" class="form-label">Masukan Nama Hewan Peliharaan</label>
-                        <input type="text" id="pet-name" name="nama_hewanpeliharaan" class="form-input">
+                        <label for="mother-name" class="form-label">Masukan Nama Hewan Anda</label>
+                        <input type="text" id="mother-name" name="nama_ibu" class="form-input">
                         <small class="form-hint">Ini digunakan saat anda lupa password!</small>
                     </div>
 

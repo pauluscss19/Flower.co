@@ -1,5 +1,8 @@
 <?php
 include "conn.php";
+
+// Ambil data produk dari database
+$products = $pdo->query("SELECT * FROM barang ORDER BY RAND() LIMIT 3")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -80,12 +83,15 @@ include "conn.php";
             <section class="menu-section">
                 <div class="menu-container">
                     <div class="menu-item">
-                        <div class="menu-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.1 5.4M7 13l2.1 5.4M17 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM9 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>
-                            </svg>
-                        </div>
-                        <span class="menu-text">Lihat Produk</span>
+                       <a href="lihat_produk.php" class="menu-link" style="text-decoration: none; color: inherit;">
+    <div class="menu-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.1 5.4M7 13l2.1 5.4M17 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM9 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>
+        </svg>
+    </div>
+    <span class="menu-text">Lihat Produk</span>
+</a>
+
                     </div>
                     <div class="menu-item">
                         <div class="menu-icon">
@@ -123,34 +129,23 @@ include "conn.php";
             <section class="products-section">
                 <h2 class="section-title">Rekomendasi Produk</h2>
                 <div class="products-container">
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="img/bunga1.jpg" alt="Bunga Paket A" class="product-img">
+                    <?php foreach ($products as $product): ?>
+                    <a href="detail_produk.php?id=<?php echo $product['id']; ?>" class="product-link" style="text-decoration: none; color: inherit;">
+                        <div class="product-item">
+                            <a href="detail_produk.php?id=<?php echo $product['id']; ?>" class="product-image-link">
+                                <div class="product-image">
+                                    <img src="uploads/<?php echo htmlspecialchars($product['gambar'] ?? 'default.jpg'); ?>" 
+                                        alt="<?php echo htmlspecialchars($product['nama_barang']); ?>" class="product-img">
+                                </div>
+                            </a>
+                            <div class="product-info">
+                                <h3 class="product-name"><?php echo htmlspecialchars($product['nama_barang']); ?></h3>
+                                <p class="product-price">Rp <?php echo number_format($product['harga'], 0, ',', '.'); ?></p>
+                            </div>
                         </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Bunga Paket A</h3>
-                            <p class="product-price">Rp 75.000</p>
-                        </div>
-                    </div>
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="img/bunga2.jpg" alt="Bunga Paket B" class="product-img">
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Bunga Paket B</h3>
-                            <p class="product-price">Rp 95.000</p>
-                        </div>
-                    </div>
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="img/bunga3.jpg" alt="Bunga Paket C" class="product-img">
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Bunga Paket C</h3>
-                            <p class="product-price">Rp 85.000</p>
-                        </div>
-                    </div>
-                </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>  
             </section>
         </div>
     </main>
