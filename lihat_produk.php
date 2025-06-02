@@ -84,27 +84,27 @@ $products = $pdo->query("SELECT * FROM barang")->fetchAll();
                 </div>
             </section>
 
-            <section class="hlm-produk-grid">
-                <?php foreach ($products as $product): ?>
-                <div class="hlm-produk-card">
-                    <div class="hlm-produk-image">
-                        <img src="img/<?php echo htmlspecialchars($product['gambar'] ?? 'default.jpg'); ?>" alt="<?php echo htmlspecialchars($product['nama_barang']); ?>">
-                        <?php if($product['stok'] == 0): ?>
-                            <span class="hlm-produk-stok habis">Habis</span>
-                        <?php elseif($product['stok'] < 5): ?>
-                            <span class="hlm-produk-stok sedikit">Hampir Habis</span>
-                        <?php endif; ?>
-                    </div>
-                    <div class="hlm-produk-info">
-                        <h3 class="hlm-produk-name"><?php echo htmlspecialchars($product['nama_barang']); ?></h3>
-                        <p class="hlm-produk-price">Rp <?php echo number_format($product['harga'], 0, ',', '.'); ?></p>
-                        <p class="hlm-produk-stok-info">Stok: <?php echo $product['stok']; ?></p>
-                        <p class="hlm-produk-terjual">Terjual: <?php echo $product['terjual']; ?></p>
-                        <button class="hlm-produk-btn">Lihat Detail Produk</button>
-                    </div>
+        <section class="hlm-produk-grid">
+            <?php foreach ($products as $product): ?>
+            <div class="hlm-produk-card">
+                <div class="hlm-produk-image">
+                    <img src="uploads/<?php echo htmlspecialchars($product['gambar'] ?? 'default.jpg'); ?>" alt="<?php echo htmlspecialchars($product['nama_barang']); ?>">
+                    <?php if($product['stok'] == 0): ?>
+                        <span class="hlm-produk-stok habis">Habis</span>
+                    <?php elseif($product['stok'] < 5): ?>
+                        <span class="hlm-produk-stok sedikit">Hampir Habis</span>
+                    <?php endif; ?>
                 </div>
-                <?php endforeach; ?>
-            </section>
+                <div class="hlm-produk-info">
+                    <h3 class="hlm-produk-name"><?php echo htmlspecialchars($product['nama_barang']); ?></h3>
+                    <p class="hlm-produk-price">Rp <?php echo number_format($product['harga'], 0, ',', '.'); ?></p>
+                    <p class="hlm-produk-stok-info">Stok: <?php echo $product['stok']; ?></p>
+                    <p class="hlm-produk-terjual">Terjual: <?php echo $product['terjual']; ?></p>
+                    <a href="detail_produk.php?id=<?php echo $product['id']; ?>" class="hlm-produk-btn">Lihat Detail Produk</a>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </section>
         </div>
     </main>
 
@@ -241,22 +241,26 @@ $products = $pdo->query("SELECT * FROM barang")->fetchAll();
             margin-bottom: 5px;
         }
 
-        .hlm-produk-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #2d5016;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
+    .hlm-produk-btn {
+        display: block; /* Agar link mengambil lebar penuh */
+        width: 100%;
+        padding: 10px;
+        background-color: #2d5016;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin-top: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none; /* Hilangkan underline default pada link */
+    }
 
-        .hlm-produk-btn:hover {
-            background-color: #1a3009;
-        }
+    .hlm-produk-btn:hover {
+        background-color: #1a3009;
+        color: white;
+    }
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -268,7 +272,41 @@ $products = $pdo->query("SELECT * FROM barang")->fetchAll();
             .hlm-produk-image {
                 height: 180px;
             }
+                .detail-container {
+            flex-direction: column;
+            gap: 20px;
         }
+
+        .detail-image {
+            max-width: 100%;
+        }
+
+        .detail-title {
+            font-size: 24px;
+        }
+
+        .detail-price {
+            font-size: 20px;
+        }
+
+        .detail-stock, .detail-sold {
+            font-size: 15px;
+        }
+
+        .btn-add-to-cart, .btn-buy-now {
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .button-container {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-add-to-cart, .btn-buy-now {
+            max-width: 100%;
+        }
+            }
 
         @media (max-width: 480px) {
             .hlm-produk-filter {
