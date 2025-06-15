@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pembelian - Florelei Flower.co</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .checkout-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            min-height: 60vh;
+        }
+
+        .checkout-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .checkout-form {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .checkout-summary {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #333;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2d5016;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.08);
+        }
+
+        /* Custom Select Styles */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #333;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: #2d5016;
+            box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.08);
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            display: none;
+        }
+
+        .custom-select-options.show {
+            display: block;
+        }
+
+        .custom-select-option {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .custom-select-option:hover {
+            background: #f0f0f0;
+        }
+
+        .payment-logo {
+            width: 24px;
+            height: 24px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d5016;
+            padding: 15px 0;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2d5016 0%, #1a3009 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-checkout:hover {
+            background: linear-gradient(135deg, #1a3009 0%, #0f1f05 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(45, 80, 22, 0.3);
+        }
+
+        .user-info {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-info-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            color: #2d5016;
+        }
+
+        .user-info-label {
+            font-size: 14px;
+            color: #666;
+            margin-right: 10px;
+            min-width: 100px;
+        }
+
+        .user-info-value {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+            .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                flex-direction: column;
+            }
+
+            .user-info {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-info-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .user-info-label {
+                min-width: auto;
+            }
+
+            .custom-select-option {
+                padding: 8px 12px;
+            }
+
+            .payment-logo {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="menu.php">
+                    <img src="img/logo.png" alt="Florelei" class="logo-img">
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Cari produk bunga..." class="search-input">
+                <button class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="header-icons">
+                <a href="notif.php" class="icon-btn" style="position: relative; display: inline-flex;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge">0</span>
+                </a>
+                <a href="keranjang.php" class="icon-btn cart-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.1 5.4M7 13l2.1 5.4M17 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM9 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>
+                    </svg>
+                </a>
+                <a href="profil.php" class="icon-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <section class="checkout-section">
+                <h2 class="section-title">Form Pembelian</h2>
+                <div class="user-info">
+                    <h3 class="section-title">Informasi Pengguna</h3>
+                    <div class="user-info-item">
+                        <svg class="user-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="user-info-label">Username</span>
+                        <span class="user-info-value">ContohUser</span>
+                    </div>
+                    <div class="user-info-item">
+                        <svg class="user-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <span class="user-info-label">Email</span>
+                        <span class="user-info-value">contoh@email.com</span>
+                    </div>
+                    <div class="user-info-item">
+                        <svg class="user-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span class="user-info-label">No. WhatsApp</span>
+                        <span class="user-info-value">081234567890</span>
+                    </div>
+                </div>
+                <div class="checkout-container">
+                    <!-- Form Checkout -->
+                    <form method="post" class="checkout-form">
+                        <div class="form-group">
+                            <label class="form-label">Alamat Pengiriman</label>
+                            <textarea name="alamat" class="form-input" rows="4" placeholder="Masukkan alamat lengkap..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Metode Pembayaran</label>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select">
+                                    <span class="custom-select-text">Pilih metode pembayaran</span>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="custom-select-options">
+                                    <div class="custom-select-option" data-value="Cash">
+                                        <img class="payment-logo" src="img/cash.svg" alt="Cash" width="24" height="24">
+                                        <span>Cash</span>
+                                    </div>
+                                    <div class="custom-select-option" data-value="QRIS">
+                                        <img class="payment-logo" src="img/qris.png" alt="QRIS" width="24" height="24">
+                                        <span>QRIS</span>
+                                    </div>
+                                    <div class="custom-select-option" data-value="BRI">
+                                        <img class="payment-logo" src="img/bri.png" alt="BRI" width="24" height="24">
+                                        <span>BRI</span>
+                                    </div>
+                                    <div class="custom-select-option" data-value="BCA">
+                                        <img class="payment-logo" src="img/bca.svg" alt="BCA" width="24" height="24">
+                                        <span>BCA</span>
+                                    </div>
+                                    <div class="custom-select-option" data-value="Mandiri">
+                                        <img class="payment-logo" src="img/livin.png" alt="Mandiri" width="24" height="24">
+                                        <span>Mandiri</span>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="metode_pembayaran" id="metode_pembayaran">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-checkout">Buat Pesanan</button>
+                    </form>
+                    <!-- Ringkasan Pesanan -->
+                    <div class="checkout-summary">
+                        <h3 class="section-title">Ringkasan Pesanan</h3>
+                        <div class="summary-item">
+                            <span>Bunga Mawar Merah (x2)</span>
+                            <span>Rp 100.000</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Bunga Tulip Pink (x1)</span>
+                            <span>Rp 75.000</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span>Rp 175.000</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const customSelect = document.querySelector('.custom-select');
+            const customSelectText = customSelect.querySelector('.custom-select-text');
+            const customSelectOptions = document.querySelector('.custom-select-options');
+            const options = customSelectOptions.querySelectorAll('.custom-select-option');
+            const hiddenInput = document.querySelector('#metode_pembayaran');
+
+            customSelect.addEventListener('click', function() {
+                customSelectOptions.classList.toggle('show');
+            });
+
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    customSelectText.textContent = this.querySelector('span').textContent;
+                    hiddenInput.value = value;
+                    customSelectOptions.classList.remove('show');
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!customSelect.contains(e.target)) {
+                    customSelectOptions.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
