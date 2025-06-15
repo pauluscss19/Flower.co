@@ -34,9 +34,35 @@ if (!$user_id) {
 
 $direct_product_id = $_GET['direct_product_id'] ?? null;
 $direct_quantity = $_GET['quantity'] ?? 1;
+$order_id = $_GET['order_id'] ?? null;
 
-if ($direct_product_id) {
-    // Handle direct product purchase (Beli Sekarang)
+// Jika ada order_id, berarti ini edit pesanan
+if ($order_id) {
+    $stmt = $pdo->prepare("SELECT * FROM pesanan WHERE id = ? AND user_id = ?");
+    $stmt->execute([$order_id, $user_id]);
+    $existing_order = $stmt->fetch();
+    
+    if ($existing_order) {
+        $stmt_items = $pdo->prepare("
+            SELECT dp.barang_id, dp.jumlah, b.nama_barang, b.harga, b.gambar, b.stok 
+            FROM detail_pesanan dp
+            JOIN barang b ON dp.barang_id = b.id
+            WHERE dp.pesanan_id = ?
+        ");
+        $stmt_items->execute([$order_id]);
+        $cart_items = $stmt_items->fetchAll();
+        
+        $total = 0;
+        foreach ($cart_items as $item) {
+            $total += $item['harga'] * $item['jumlah'];
+        }
+    } else {
+        header("Location: pemesanan.php");
+        exit;
+    }
+} 
+// Jika direct product
+elseif ($direct_product_id) {
     $stmt = $pdo->prepare("SELECT * FROM barang WHERE id = ?");
     $stmt->execute([$direct_product_id]);
     $direct_product = $stmt->fetch();
@@ -56,8 +82,9 @@ if ($direct_product_id) {
         header("Location: lihat_produk.php");
         exit;
     }
-} else {
-    // Handle cart purchase
+} 
+// Jika dari keranjang
+else {
     $stmt = $pdo->prepare("SELECT ki.id, ki.jumlah, b.id as barang_id, b.nama_barang, b.harga, b.gambar, b.stok 
                           FROM keranjang k 
                           JOIN keranjang_item ki ON k.id = ki.keranjang_id 
@@ -74,7 +101,6 @@ if ($direct_product_id) {
 
 // Proses form checkout
 $errors = [];
-$success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $alamat = trim($_POST['alamat'] ?? '');
     $metode_pembayaran = $_POST['metode_pembayaran'] ?? '';
@@ -102,15 +128,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo->beginTransaction();
 
-            // Simpan ke tabel pesanan
-            $stmt = $pdo->prepare("
-                INSERT INTO pesanan (user_id, alamat_pengiriman, metode_pembayaran, tanggal_pemesanan, status) 
-                VALUES (?, ?, ?, NOW(), 'pending')
-            ");
-            $stmt->execute([$user_id, $alamat, $metode_pembayaran]);
-            $pesanan_id = $pdo->lastInsertId();
+            // Tentukan status berdasarkan metode pembayaran
+            $status = ($metode_pembayaran === 'Cash') ? 'dibayar' : 'pending';
+            
+            // Jika edit pesanan
+            if ($order_id) {
+                // Update pesanan
+                $stmt = $pdo->prepare("
+                    UPDATE pesanan 
+                    SET alamat_pengiriman = ?, metode_pembayaran = ?, status = ?
+                    WHERE id = ? AND user_id = ?
+                ");
+                $stmt->execute([$alamat, $metode_pembayaran, $status, $order_id, $user_id]);
+                
+                // Hapus detail pesanan lama
+                $stmt = $pdo->prepare("DELETE FROM detail_pesanan WHERE pesanan_id = ?");
+                $stmt->execute([$order_id]);
+                
+                // Kembalikan stok barang lama
+                $stmt = $pdo->prepare("
+                    UPDATE barang b
+                    JOIN detail_pesanan dp ON b.id = dp.barang_id
+                    SET b.stok = b.stok + dp.jumlah
+                    WHERE dp.pesanan_id = ?
+                ");
+                $stmt->execute([$order_id]);
+                
+                $pesanan_id = $order_id;
+            } 
+            // Jika pesanan baru
+            else {
+                // Simpan pesanan baru
+                $stmt = $pdo->prepare("
+                    INSERT INTO pesanan (user_id, alamat_pengiriman, metode_pembayaran, tanggal_pemesanan, status) 
+                    VALUES (?, ?, ?, NOW(), ?)
+                ");
+                $stmt->execute([$user_id, $alamat, $metode_pembayaran, $status]);
+                $pesanan_id = $pdo->lastInsertId();
+                
+                // Kosongkan keranjang jika bukan direct product
+                if (!$direct_product_id) {
+                    $stmt = $pdo->prepare("DELETE FROM keranjang_item WHERE keranjang_id IN (SELECT id FROM keranjang WHERE user_id = ?)");
+                    $stmt->execute([$user_id]);
+                }
+            }
 
-            // Simpan detail pesanan
+            // Simpan detail pesanan dan kurangi stok
             foreach ($cart_items as $item) {
                 $stmt = $pdo->prepare("
                     INSERT INTO detail_pesanan (pesanan_id, barang_id, jumlah, harga_satuan) 
@@ -118,25 +181,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
                 $stmt->execute([$pesanan_id, $item['barang_id'], $item['jumlah'], $item['harga']]);
 
-                // Kurangi stok barang
                 $stmt = $pdo->prepare("UPDATE barang SET stok = stok - ? WHERE id = ?");
                 $stmt->execute([$item['jumlah'], $item['barang_id']]);
             }
 
-            // Kosongkan keranjang
-            $stmt = $pdo->prepare("DELETE FROM keranjang_item WHERE keranjang_id IN (SELECT id FROM keranjang WHERE user_id = ?)");
-            $stmt->execute([$user_id]);
-
             $pdo->commit();
-            $success = "Pesanan berhasil dibuat! ";
 
-            // Arahkan ke halaman unggah bukti pembayaran jika metode bukan Cash
-            if ($metode_pembayaran !== 'Cash') {
-                header("Location: upload_bukti.php?pesanan_id=$pesanan_id");
-                exit;
+            // Redirect berdasarkan metode pembayaran
+            if ($metode_pembayaran === 'Cash') {
+                header("Location: struk.php?pesanan_id=$pesanan_id");
             } else {
-                $success .= "Silakan lakukan pembayaran secara tunai saat barang diterima.";
+                header("Location: bukti_bayar.php?pesanan_id=$pesanan_id");
             }
+            exit;
+            
         } catch (Exception $e) {
             $pdo->rollBack();
             $errors[] = "Terjadi kesalahan saat menyimpan pesanan: " . $e->getMessage();
@@ -438,10 +496,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <!-- Main Content -->
-    <main class="main">
+  <main class="main">
         <div class="container">
             <section class="checkout-section">
-                <h2 class="section-title">Form Pembelian</h2>
+                <h2 class="section-title"><?php echo $order_id ? 'Edit Pembayaran' : 'Form Pembelian'; ?></h2>
                 <?php if (!empty($errors)): ?>
                     <div class="notif error">
                         <?php foreach ($errors as $error): ?>
@@ -449,11 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
-                <?php if ($success): ?>
-                    <div class="notif success">
-                        <p><?php echo htmlspecialchars($success); ?></p>
-                    </div>
-                <?php endif; ?>
+                
                 <?php if (!empty($cart_items)): ?>
                     <div class="user-info">
                         <h3 class="section-title">Informasi Pengguna</h3>
@@ -481,49 +535,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="user-info-value"><?php echo htmlspecialchars($user_data['no_wa'] ?? 'Tidak tersedia'); ?></span>
                         </div>
                     </div>
+                    
                     <div class="checkout-container">
                         <!-- Form Checkout -->
-<form method="post" class="checkout-form">
-    <div class="form-group">
-        <label class="form-label">Alamat Pengiriman</label>
-        <textarea name="alamat" class="form-input" rows="4" placeholder="Masukkan alamat lengkap..." required><?php echo htmlspecialchars($_POST['alamat'] ?? ''); ?></textarea>
-    </div>
-    <div class="form-group">
-        <label class="form-label">Metode Pembayaran</label>
-        <div class="custom-select-wrapper">
-            <div class="custom-select">
-                <span class="custom-select-text">Pilih metode pembayaran</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </div>
-            <div class="custom-select-options">
-<div class="custom-select-option" data-value="Cash">
-    <img class="payment-logo" src="img/cash.svg" alt="Cash" width="24" height="24">
-    <span>Cash</span>
-</div>
-<div class="custom-select-option" data-value="QRIS">
-    <img class="payment-logo" src="img/qris.png" alt="QRIS" width="24" height="24">
-    <span>QRIS</span>
-</div>
-<div class="custom-select-option" data-value="BRI">
-    <img class="payment-logo" src="img/bri.png" alt="BRI" width="24" height="24">
-    <span>BRI</span>
-</div>
-<div class="custom-select-option" data-value="BCA">
-    <img class="payment-logo" src="img/bca.svg" alt="BCA" width="24" height="24">
-    <span>BCA</span>
-</div>
-<div class="custom-select-option" data-value="Mandiri">
-    <img class="payment-logo" src="img/livin.png" alt="Mandiri" width="24" height="24">
-    <span>Mandiri</span>
-</div>
-            </div>
-            <input type="hidden" name="metode_pembayaran" id="metode_pembayaran">
-        </div>
-    </div>
-    <button type="submit" class="btn-checkout">Buat Pesanan</button>
-</form>
+                        <form method="post" class="checkout-form">
+                            <div class="form-group">
+                                <label class="form-label">Alamat Pengiriman</label>
+                                <textarea name="alamat" class="form-input" rows="4" placeholder="Masukkan alamat lengkap..." required><?php 
+                                    echo htmlspecialchars(
+                                        $_POST['alamat'] ?? 
+                                        ($existing_order['alamat_pengiriman'] ?? '')
+                                    ); 
+                                ?></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Metode Pembayaran</label>
+                                <div class="custom-select-wrapper">
+                                    <div class="custom-select">
+                                        <span class="custom-select-text">
+                                            <?php 
+                                                $selected_payment = $_POST['metode_pembayaran'] ?? ($existing_order['metode_pembayaran'] ?? 'Pilih metode pembayaran');
+                                                echo htmlspecialchars($selected_payment === 'Pilih metode pembayaran' ? $selected_payment : '');
+                                            ?>
+                                        </span>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="custom-select-options">
+                                        <div class="custom-select-option" data-value="Cash">
+                                            <img class="payment-logo" src="img/cash.svg" alt="Cash" width="24" height="24">
+                                            <span>Cash</span>
+                                        </div>
+                                        <div class="custom-select-option" data-value="QRIS">
+                                            <img class="payment-logo" src="img/qris.png" alt="QRIS" width="24" height="24">
+                                            <span>QRIS</span>
+                                        </div>
+                                        <div class="custom-select-option" data-value="BRI">
+                                            <img class="payment-logo" src="img/bri.png" alt="BRI" width="24" height="24">
+                                            <span>BRI</span>
+                                        </div>
+                                        <div class="custom-select-option" data-value="BCA">
+                                            <img class="payment-logo" src="img/bca.svg" alt="BCA" width="24" height="24">
+                                            <span>BCA</span>
+                                        </div>
+                                        <div class="custom-select-option" data-value="Mandiri">
+                                            <img class="payment-logo" src="img/livin.png" alt="Mandiri" width="24" height="24">
+                                            <span>Mandiri</span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="metode_pembayaran" id="metode_pembayaran" value="<?php 
+                                        echo htmlspecialchars($_POST['metode_pembayaran'] ?? ($existing_order['metode_pembayaran'] ?? '')); 
+                                    ?>">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-checkout">
+                                <?php echo $order_id ? 'Update Pesanan' : 'Buat Pesanan'; ?>
+                            </button>
+                        </form>
+                        
                         <!-- Ringkasan Pesanan -->
                         <div class="checkout-summary">
                             <h3 class="section-title">Ringkasan Pesanan</h3>
@@ -561,6 +633,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const customSelectOptions = document.querySelector('.custom-select-options');
             const options = customSelectOptions.querySelectorAll('.custom-select-option');
             const hiddenInput = document.querySelector('#metode_pembayaran');
+
+            // Set selected payment method if exists
+            if (hiddenInput.value) {
+                options.forEach(option => {
+                    if (option.getAttribute('data-value') === hiddenInput.value) {
+                        customSelectText.textContent = option.querySelector('span').textContent;
+                    }
+                });
+            }
 
             customSelect.addEventListener('click', function() {
                 customSelectOptions.classList.toggle('show');
