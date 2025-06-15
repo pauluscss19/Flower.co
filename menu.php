@@ -35,7 +35,7 @@ $notification_count = $barang_count + $promo_count;
     <title>Florelei Flower.co - Homepage</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .cart-badge {
+            .cart-badge {
             position: absolute;
             top: -5px;
             right: -5px;
@@ -50,6 +50,7 @@ $notification_count = $barang_count + $promo_count;
             justify-content: center;
             line-height: 1;
         }
+
 
     </style>
 </head>
@@ -129,23 +130,23 @@ $notification_count = $barang_count + $promo_count;
                             <span class="menu-text">Lihat Produk</span>
                     </a>
                     <div class="menu-item">
-                        <div class="menu-icon">
+                        <a href="pemesanan.php" class="menu-icon">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                                 <polyline points="7.5,4.21 12,6.81 16.5,4.21"></polyline>
                                 <polyline points="7.5,19.79 7.5,14.6 3,12"></polyline>
                                 <polyline points="21,12 16.5,14.6 16.5,19.79"></polyline>
                             </svg>
-                        </div>
+                        </a>
                         <span class="menu-text">Pesanan</span>
                     </div>
                     <div class="menu-item">
-                        <div class="menu-icon">
+                        <a href="custom.php" class="menu-icon">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 20h9"></path>
                                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                             </svg>
-                        </div>
+                        </a>
                         <span class="menu-text">Customize</span>
                     </div>
                     <a href="notif.php" class="menu-item">
