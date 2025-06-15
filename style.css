@@ -1306,20 +1306,10 @@ body {
     margin-right: 10px;
 }
 
-.btn-buy-now {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-}
-
-.btn-add-to-cart:hover {
+.btn-add-to-cart:hover, .btn-buy-now:hover {
     background: linear-gradient(135deg, #1a3009 0%, #0f1f05 100%);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(45, 80, 22, 0.3);
-}
-
-.btn-buy-now:hover {
-    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
 }
 
 .btn-add-to-cart:active, .btn-buy-now:active {
@@ -1915,6 +1905,8 @@ body {
   transform: translateY(0);
   box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
 }
+
+
 
 /* Responsive Design */
 @media (max-width: 480px) {
